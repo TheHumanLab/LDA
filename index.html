@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leadership Dependency Audit™ | The Human Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #111010;
+    --gold: #BAA36C;
+    --gold-dim: #7a6b45;
+    --cream: #E8E4DC;
+    --cream-dim: #9e9a93;
+    --surface: #1a1918;
+    --surface2: #222120;
+    --border: rgba(186,163,108,0.15);
+    --border-active: rgba(186,163,108,0.5);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    line-height: 1.7;
+  }
+
+  /* ── HEADER ── */
+  .instrument-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .header-brand {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+  }
+
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+    max-width: 380px;
+  }
+
+  .progress-bar-bg {
+    flex: 1;
+    height: 1px;
+    background: rgba(186,163,108,0.15);
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--gold);
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  .progress-label {
+    font-size: 11px;
+    color: var(--gold-dim);
+    white-space: nowrap;
+    letter-spacing: 0.08em;
+    min-width: 48px;
+    text-align: right;
+  }
+
+  /* ── BODY ── */
+  .instrument-body {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 6rem;
+  }
+
+  /* ── INTRO STRIP ── */
+  .intro-strip {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .intro-tag {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .intro-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: var(--cream);
+    margin-bottom: 0.5rem;
+  }
+
+  .intro-body {
+    font-size: 0.82rem;
+    color: var(--cream-dim);
+    line-height: 1.75;
+  }
+
+  /* ── CLASSIFICATION ── */
+  .section-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-tag {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 300;
+    color: var(--cream);
+    margin-bottom: 0.35rem;
+  }
+
+  .section-desc {
+    font-size: 0.82rem;
+    color: var(--cream-dim);
+  }
+
+  .classify-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 3rem;
+  }
+
+  @media (max-width: 500px) { .classify-grid { grid-template-columns: 1fr; } }
+
+  .field-group { display: flex; flex-direction: column; gap: 0.4rem; }
+
+  .field-label {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+  }
+
+  .field-input, .field-select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--cream);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 300;
+    padding: 0.7rem 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+    border-radius: 0;
+    width: 100%;
+  }
+
+  .field-input:focus, .field-select:focus { border-color: var(--gold-dim); }
+
+  .select-wrap { position: relative; }
+  .select-wrap::after {
+    content: '↓';
+    position: absolute;
+    right: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold-dim);
+    font-size: 11px;
+    pointer-events: none;
+  }
+
+  /* ── VARIABLE BLOCKS ── */
+  .variable-block {
+    margin-bottom: 3rem;
+  }
+
+  .variable-tag {
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+
+  .variable-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-weight: 400;
+    color: var(--gold);
+    margin-bottom: 0.3rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .variable-desc {
+    font-size: 0.78rem;
+    color: var(--cream-dim);
+    opacity: 0.6;
+    letter-spacing: 0.02em;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+  }
+
+  /* ── QUESTION ITEMS ── */
+  .question-item {
+    margin-bottom: 2rem;
+  }
+
+  .scale-type {
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: var(--cream-dim);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    opacity: 0.55;
+  }
+
+  .question-text {
+    font-size: 0.9rem;
+    color: var(--cream);
+    line-height: 1.65;
+    margin-bottom: 0.85rem;
+  }
+
+  /* ── LIKERT ── */
+  .likert {
+    display: flex;
+    gap: 5px;
+  }
+
+  .likert-option { flex: 1; cursor: pointer; }
+  .likert-option input { display: none; }
+
+  .likert-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 0.55rem 0.15rem;
+    border: 1px solid var(--border);
+    background: transparent;
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+
+  .likert-num {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--cream-dim);
+    line-height: 1;
+  }
+
+  .likert-micro {
+    font-size: 7px;
+    letter-spacing: 0.04em;
+    color: var(--cream-dim);
+    text-align: center;
+    opacity: 0;
+    line-height: 1.25;
+  }
+
+  .likert-option input:checked + .likert-btn {
+    border-color: var(--gold);
+    background: rgba(186,163,108,0.08);
+  }
+
+  .likert-option input:checked + .likert-btn .likert-num { color: var(--gold); }
+  .likert-option input:checked + .likert-btn .likert-micro { opacity: 1; color: var(--gold-dim); }
+  .likert-option:hover .likert-btn { border-color: var(--border-active); background: rgba(186,163,108,0.04); }
+
+  .scale-anchors {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3px;
+    font-size: 8px;
+    color: var(--cream-dim);
+    opacity: 0.4;
+    letter-spacing: 0.04em;
+  }
+
+  /* error */
+  .question-item.error .likert-btn { border-color: rgba(180,80,80,0.35); }
+  .error-msg {
+    font-size: 10px;
+    color: #c07070;
+    margin-top: 0.35rem;
+    display: none;
+  }
+  .question-item.error .error-msg { display: block; }
+
+  /* ── EMAIL SECTION ── */
+  .email-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .email-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 300;
+    color: var(--cream);
+    margin-bottom: 0.4rem;
+  }
+
+  .email-desc {
+    font-size: 0.8rem;
+    color: var(--cream-dim);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+
+  /* ── SUBMIT ── */
+  .submit-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .submit-btn {
+    background: var(--gold);
+    color: var(--bg);
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 1rem 2.5rem;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s;
+  }
+
+  .submit-btn:hover { background: #cdb47a; transform: translateY(-1px); }
+  .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .submit-note {
+    font-size: 11px;
+    color: var(--cream-dim);
+    opacity: 0.5;
+  }
+
+  /* ── HOLDING SCREEN ── */
+  #screen-holding {
+    display: none;
+    min-height: 100vh;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 1.5rem;
+    text-align: center;
+  }
+
+  #screen-holding.active { display: flex; }
+
+  .holding-inner { max-width: 520px; }
+
+  .holding-icon {
+    width: 56px;
+    height: 56px;
+    border: 1px solid var(--border-active);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2rem;
+    color: var(--gold);
+    font-size: 1.2rem;
+  }
+
+  .holding-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    font-weight: 300;
+    color: var(--cream);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+
+  .holding-body {
+    font-size: 0.875rem;
+    color: var(--cream-dim);
+    line-height: 1.8;
+    margin-bottom: 2.5rem;
+  }
+
+  .holding-divider {
+    width: 36px;
+    height: 1px;
+    background: var(--gold-dim);
+    margin: 0 auto 2.5rem;
+    opacity: 0.3;
+  }
+
+  .upsell-card {
+    background: var(--surface);
+    border: 1px solid var(--border-active);
+    padding: 2rem;
+    text-align: left;
+    margin-bottom: 2rem;
+  }
+
+  .upsell-tag {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .upsell-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 400;
+    color: var(--cream);
+    margin-bottom: 0.75rem;
+    line-height: 1.35;
+  }
+
+  .upsell-body {
+    font-size: 0.8rem;
+    color: var(--cream-dim);
+    line-height: 1.75;
+    margin-bottom: 1.5rem;
+  }
+
+  .upsell-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+
+  .upsell-btn {
+    display: inline-block;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: 'Jost', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 0.75rem 2rem;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    background: transparent;
+  }
+
+  .upsell-btn:hover { background: var(--gold); color: var(--bg); }
+
+  .holding-footnote {
+    font-size: 10px;
+    color: var(--cream-dim);
+    opacity: 0.35;
+    line-height: 1.7;
+    letter-spacing: 0.06em;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ INSTRUMENT ══════════════════ -->
+<div id="screen-instrument">
+
+  <div class="instrument-header">
+    <div class="header-brand">[ THL ] · Leadership Dependency Audit™ · LDA-01</div>
+    <div class="progress-wrap">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+      <div class="progress-label" id="progress-label">0 / 20</div>
+    </div>
+  </div>
+
+  <div class="instrument-body">
+
+    <div class="intro-strip">
+      <div class="intro-tag">[ THL-SYS ] · Instrument LDA-01</div>
+      <h1 class="intro-title">Leadership Dependency Audit™</h1>
+      <p class="intro-body">This instrument maps how your organisation's operational health is distributed — or concentrated. Answer each question as accurately as possible, reflecting how things currently operate rather than how they should. There are no right responses. The diagnostic value lives in the honest ones.</p>
+    </div>
+
+    <!-- CLASSIFICATION -->
+    <div class="section-header">
+      <div class="section-tag">Classification</div>
+      <h2 class="section-title">About your role</h2>
+      <p class="section-desc">This context shapes how your responses are interpreted. All information is confidential.</p>
+    </div>
+
+    <div class="classify-grid">
+      <div class="field-group">
+        <label class="field-label" for="role-title">Role title</label>
+        <input class="field-input" type="text" id="role-title" placeholder="e.g. CEO, COO, Director">
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="dept">Department / Function</label>
+        <input class="field-input" type="text" id="dept" placeholder="e.g. Operations, Finance">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Years in current role</label>
+        <div class="select-wrap">
+          <select class="field-select" id="tenure">
+            <option value="">Select</option>
+            <option>Less than 1 year</option>
+            <option>1–3 years</option>
+            <option>3–5 years</option>
+            <option>5+ years</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Direct reports</label>
+        <div class="select-wrap">
+          <select class="field-select" id="reports">
+            <option value="">Select</option>
+            <option>None</option>
+            <option>1–3</option>
+            <option>4–8</option>
+            <option>9–15</option>
+            <option>16+</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Budget responsibility</label>
+        <div class="select-wrap">
+          <select class="field-select" id="budget">
+            <option value="">Select</option>
+            <option>Yes</option>
+            <option>No</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Organisation size</label>
+        <div class="select-wrap">
+          <select class="field-select" id="org-size">
+            <option value="">Select</option>
+            <option>Under 20</option>
+            <option>20–50</option>
+            <option>51–200</option>
+            <option>201–500</option>
+            <option>500+</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- DIMENSION 1 — Decision Gravity -->
+    <div class="variable-block">
+      <div class="variable-tag">Dimension 1 of 5</div>
+      <div class="variable-name">Decision Gravity</div>
+      <div class="variable-desc">Where authority accumulates and slows organisational intelligence</div>
+
+      <div class="question-item" data-q="1">
+        <div class="scale-type">Structural maturity scale — 1 Fully person dependent · 5 Fully system supported</div>
+        <div class="question-text">If a senior leader is unavailable for 5 working days, how many operational decisions pause?</div>
+        <div class="likert">
+          <label class="likert-option"><input type="radio" name="q1" value="1"><div class="likert-btn"><span class="likert-num">1</span><span class="likert-micro">Fully person<br>dependent</span></div></label>
+          <label class="likert-option"><input type="radio" name="q1" value="2"><div class="likert-btn"><span class="likert-num">2</span><span class="likert-micro">Mostly<br>person</span></div></label>
+          <label class="likert-option"><input type="radio" name="q1" value="3"><div class="likert-btn"><span class="likert-num">3</span><span class="likert-micro">Mixed</span></div></label>
+          <label class="likert-option"><input type="radio" name="q1" value="4"><div class="likert-btn"><span class="likert-num">4</span><span class="likert-micro">Mostly<br>system</span></div></label>
+          <label class="likert-option"><input type="radio" name="q1" value="5"><div class="likert-btn"><span class="likert-num">5</span><span class="likert-micro">Fully system<br>supported</span></div></label>
+        </div>
+        <div class="scale-anchors"><span>Fully person dependent</span><span>Fully system supported</span></div>
+        <div class="error-msg">Please select a response.</div>
+      </div>
+
+      <div class="question-item" data-q="2">
+        <div class="scale-type">Structural maturity scale</div>
+        <div class="question-text">How many decisions require escalation that could realistically sit one level lower?</div>
+        <div class="likert">
+          <label class="likert-option"><input type="radio" name="q2" value="1"><div class="likert-btn"><span class="likert-num">1</span></div></label>
+          <label class="likert-option"><input type="radio" name="q2" value="2"><div class="likert-btn"><span class="likert-num">2</span></div></label>
+          <label class="likert-option"><input type="radio" name="q2" value="3"><div class="likert-btn"><span class="likert-num">3</span></div></label>
+          <label class="likert-option"><input type="radio" name="q2" value="4"><div class="likert-btn"><span class="likert-num">4</span></div></label>
+          <label class="likert-option"><input type="radio" name="q2" value="5"><div class="likert-btn"><span class="likert-num">5</span></div></label>
+        </div>
+        <div class="scale-anchors"><span>Fully person dependent</span><span>Fully system supported</span></div>
+        <div class="error-msg">Please select a response.</div>
+      </div>
+
+      <div class="question-item" data-q="3">
+        <div class="scale-type">Structural maturity scale</div>
+        <div class="question-text">Do teams know what they are allowed to decide without approval?</div>
+        <div class="likert">
+          <label class="likert-option"><input type="radio" name="q3" value="1"><div class="likert-btn"><span class="likert-num">1</span></div></label>
+          <label class="likert-option"><input type="radio" name="q3" value="2"><div class="likert-btn"><span class="likert-num">2</span></div></label>
+          <label class="likert-option"><input type="radio" name="q3" value="3"><div class="likert-btn"><span class="likert-num">3</span></div></label>
+          <label class="likert-option"><input type="radio" name="q3" value="4"><div class="likert-btn"><span class="likert-num">4</span></div></label>
+          <label class="likert-option"><input type="radio" name="q3" value="5"><div class="likert-btn"><span class="likert-num">5</span></div></label>
+        </div>
+        <div class="scale-anchors"><span>Fully person dependent</span><span>Fully system supported</span></div>
+        <div class="error-msg">Please select a response.</div>
+      </div>
+
+      <div class="question-item" data-q="4">
+        <div class="scale-type">Structural maturity scale</div>
+        <div class="question-text">How often do projects stall waiting for leadership input?</div>
+        <div class="likert">
+          <label class="likert-option"><input type="radio" name="q4" value="1"><div class="likert-btn"><span class="likert-num">1</span></div></label>
+          <label class="likert-option"><input type="radio" name="q4" value="2"><div class="likert-btn"><span class="likert-num">2</span></div></label>
+          <label class="likert-option"><input type="radio" name="q4" value="3"><div class="likert-btn"><span class="likert-num">3</span></div></label>
+          <label class="likert-option"><input type="radio" name="q4" value="4"><div class="likert-btn"><span class="likert-num">4</span></div></label>
+          <label class="likert-option"><input type="radio" name="q4" value="5"><div class="likert-btn"><span class="likert-num">5</span></div></label>
+        </div>
+        <div class="scale-anchors"><span>Fully person dependent</span><span>Fully system supported</span></div>
+        <div class="error-msg">Please select a response.</div>
+      </div>
+    </div>
+
+    <!-- DIMENSION 2 — Knowledge Concentration -->
+    <div class="variable-block">
+      <div class="variable-tag">Dimension 2 of 5</div>
+      <div class="variable-name">Knowledge Concentration</div>
+      <div class="variable-desc">Where organisational intelligence exists inside individuals instead of systems</div>
+
+      <div class="question-item" data-q="5">
+        <div class="scale-type">Structural maturity scale — 1 Fully person dependent · 5 Fully system supported</div>
+        <div class="question-text">Are there critical processes only one person fully understands?</div>
+        <div class="likert">
+          <label class="likert-option"><input type="radio" name="q5" value="1"><div class="likert-btn"><span class="likert-num">1</span><span class="likert-micro">Fully person<br>dependent</span></div></label>
+          <label class="likert-option"><input type="radio" name="q5" value="2"><div class="likert-btn"><span class="likert-num">2</span><span class="likert-micro">Mostly<br>person</span></div></label>
+          <label class="likert-option"><input type="radio" name="q5" value="3"><div class="likert-btn"><span class="likert-num">3</span><span class="likert-micro">Mixed</span></div></label>
+          <label class="likert-option"><input type="radio" name="q5" value="4"><div class="likert-btn"><span class="likert-num">4</span><span class="likert-micro">Mostly<br>system</span></div></label>
+          <label class="likert-option"><input type="radio" name="q5" value="5"><div class="likert-btn"><span class="likert-num">5</span><span class="likert-micro">Fully system<br>supported</span></div></label>
+        </div>
+        <div class="scale-anchors"><span>Fully person dependent</span><span>Fully system supported</span></div>
+        <div class="error-msg">Please select a response.</div>
+      </div>
+
+      <div class="question-item" data-q="6">
+        <div class="scale-type">Structural maturity scale</div>
+        <div class="question-text">If a key leader resigned tomorrow, how much operational knowledge would leave with them?</div>
+        <div class="likert">
+          <label class="likert-option"><input type="radio" name="q6" value="1"><div class="likert-btn"><span class="likert-num">1</span></div></label>
+          <label class="likert-option"><input type="radio" name="q6" value="2"><div class="likert-btn"><span class="likert-num">2</span></div></label>
+          <label class="likert-option"><input type="radio" name="q6" value="3"><div class="likert-btn"><span class="likert-num">3</span></div></label>
+          <label class="likert-option"><input type="radio" name="q6" value="4"><div class="likert-btn"><span class="likert-num">4</span></div></label>
+          <label class="likert-option"><input type="radio" name="q6" value="5"><div class="likert-btn"><span class="likert-num">5</span></div></label>
+        </div>
+        <div class="scale-anchors"><span>Fully person dependent</span><span>Fully system supported</span></div>
+        <div class="error-msg">Please select a response.</div>
+      </div>
+
+      <div class="question-item" data-q="7">
+        <div class="scale-type">Structural maturity scale</div>
+        <div class="question-text">Is documentation current enough for someone else to step in if needed?</div>
+        <div class="likert">
+          <label class="likert-option"><input type="radio" name="q7" value="1"><div class="likert-btn"><span class="likert-num">1</span></div></label>
+          <label class="likert-option"><input type="radio" name="q7" value="2"><div class="likert-btn"><span class="likert-num">2</span></div></label>
+          <label class="likert-option"><input type="radio" name="q7" value="3"><div class="likert-btn"><span class="likert-num">3</span></div></label>
+          <label class="likert-option"><input type="radio" name="q7" value="4"><div class="likert-btn"><span class="likert-num">4</span></div></label>
+          <label class="likert-option"><input type="radio" name="q7" value="5"><div class="likert-btn"><span class="likert-num">5</span></div></label>
+        </div>
+        <div class="scale-anchors"><span>Fully person dependent</span><span>Fully system supported</span></div>
+        <div class="error-msg">Please select a response.</div>
+      </div>
+
+      <div class="question-item" data-q="8">
+        <div class="scale-type">Structural maturity scale</div>
+        <div class="question-text">How often do people rely on "asking the person" rather than checking a system?</div>
+        <div class="likert">
+          <label class="likert-option"><input type="radio" name="q8" value="1"><div class="likert-btn"><span class="likert-num">1</span></div></label>
+          <label class="likert-option"><input type="radio" name="q8" value="2"><div class="likert-btn"><span class="likert-num">2</span></div></label>
+          <label class="likert-option"><input type="radio" name="q8" value="3"><div class="likert-btn"><span class="likert-num">3</span></div></label>
+          <label class="likert-option"><input type="radio" name="q8" value="4"><div class="likert-btn"><span class="likert-num">4</span></div></label>
+          <label class="likert-option"><input type="radio" name="q8" value="5"><div class="likert-btn"><span class="likert-num">5</span></div></label>
+        </div>
+        <div class="scale-anchors"><span>Fully person dependent</span><span>Fully system supported</span></div>
+        <div class="error-msg">Please select a response.</div>
+      </div>
+    </div>
+
+    <!-- DIMENSION 3 — Execution Dependency -->
+    <div class="variable-block">
+      <div class="variable-tag">Dimension 3 of 5</div>
+      <div class="variable-name">Execution Dependency</div>
+      <div class="variable-desc">Where progress depends on personality rather than structure</div>
+
+      <div class="question-item" data-q="9">
+        <div class="scale-type">Structural maturity scale — 1 Fully person dependent · 5 Fully system supported</div>
+        <div class="question-text">Do initiatives slow when certain leaders lose focus or capacity?</div>
+        <div class="likert">
+          <label class="likert-option"><input type="radio" name="q9" value="1"><div class="likert-btn"><span class="likert-num">1</span><span class="likert-micro">Fully person<br>dependent</span></div></label>
+          <label class="likert-option"><input type="radio" name="q9" value="2"><div class="likert-btn"><span class="likert-num">2</span><span class="likert-micro">Mostly<br>person</span></div></label>
+          <label class="likert-option"><input type="radio" name="q9" value="3"><div class="likert-btn"><span class="likert-num">3</span><span class="likert-micro">Mixed</span></div></label>
+          <label class="likert-option"><input type="radio" name="q9" value="4"><div class="likert-btn"><span class="likert-num">4</span><span class="likert-micro">Mostly<br>system</span></div></label>
+          <label class="likert-option"><input type="radio" name="q9" value="5"><div class="likert-btn"><span class="likert-num">5</span><span class="likert-micro">Fully system<br>supported</span></div></label>
+        </div>
+        <div class="scale-anchors"><span>Fully person dependent</span><span>Fully system supported</span></div>
+        <div class="error-msg">Please select a response.</div>
+      </div>
+
+      <div class="question-item" data-q="10">
+        <div class="scale-type">Structural maturity scale</div>
+        <div class="question-text">Are there projects that only move forward when one specific person pushes them?</div>
+        <div class="likert">
+          <label class="likert-option"><input type="radio" name="q10" value="1"><div class="likert-btn"><span class="likert-num">1</span></div></label>
+          <label class="likert-option"><input type="radio" name="q10" value="2"><div class="likert-btn"><span class="likert-num">2</span></div></label>
+          <label class="likert-option"><input type="radio" name="q10" value="3"><div class="likert-btn"><span class="likert-num">3</span></div></label>
+          <label class="likert-option"><input type="radio" name="q10" value="4"><div class="likert-btn"><span class="likert-num">4</span></div></label>
+          <label class="likert-option"><input type="radio" name="q10" value="5"><div class="likert-btn"><span class="likert-num">5</span></div></label>
+        </div>
+        <div class="scale-anchors"><span>Fully person dependent</span><span>Fully system supported</span></div>
+        <div class="error-msg">Please select a response.</div>
+      </div>
+
+      <div class="question-item" data-q="11">
+        <div class="scale-type">Structural maturity scale</div>
+        <div class="question-text">Is performance consistency driven by process or by individual discipline?</div>
+        <div class="likert">
+          <label class="likert-option"><input type="radio" name="q11" value="1"><div class="likert-btn"><span class="likert-num">1</span></div></label>
+          <label class="likert-option"><input type="radio" name="q11" value="2"><div class="likert-btn"><span class="likert-num">2</span></div></label>
+          <label class="likert-option"><input type="radio" name="q11" value="3"><div class="likert-btn"><span class="likert-num">3</span></div></label>
+          <label class="likert-option"><input type="radio" name="q11" value="4"><div class="likert-btn"><span class="likert-num">4</span></div></label>
+          <label class="likert-option"><input type="radio" name="q11" value="5"><div class="likert-btn"><span class="likert-num">5</span></div></label>
+        </div>
+        <div class="scale-anchors"><span>Fully person dependent</span><span>Fully system supported</span></div>
+        <div class="error-msg">Please select a response.</div>
+      </div>
+
+      <div class="question-item" data-q="12">
+        <div class="scale-type">Structural maturity scale</div>
+        <div class="question-text">How often does execution quality vary between departments?</div>
+        <div class="likert">
+          <label class="likert-option"><input type="radio" name="q12" value="1"><div class="likert-btn"><span class="likert-num">1</span></div></label>
+          <label class="likert-option"><input type="radio" name="q12" value="2"><div class="likert-btn"><span class="likert-num">2</span></div></label>
+          <label class="likert-option"><input type="radio" name="q12" value="3"><div class="likert-btn"><span class="likert-num">3</span></div></label>
+          <label class="likert-option"><input type="radio" name="q12" value="4"><div class="likert-btn"><span class="likert-num">4</span></div></label>
+          <label class="likert-option"><input type="radio" name="q12" value="5"><div class="likert-btn"><span class="likert-num">5</span></div></label>
+        </div>
+        <div class="scale-anchors"><span>Fully person dependent</span><span>Fully system supported</span></div>
+        <div class="error-msg">Please select a response.</div>
+      </div>
+    </div>
+
+    <!-- DIMENSION 4 — Cultural Load Bearing -->
+    <div class="variable-block">
+      <div class="variable-tag">Dimension 4 of 5</div>
+      <div class="variable-name">Cultural Load Bearing</div>
+      <div class="variable-desc">Who stabilises morale, conflict and psychological safety</div>
+
+      <div class="question-item" data-q="13">
+        <div class="scale-type">Structural maturity scale — 1 Fully person dependent · 5 Fully system supported</div>
+        <div class="question-text">Are there leaders who act as informal conflict stabilisers?</div>
+        <div class="likert">
+          <label class="likert-option"><input type="radio" name="q13" value="1"><div class="likert-btn"><span class="likert-num">1</span><span class="likert-micro">Fully person<br>dependent</span></div></label>
+          <label class="likert-option"><input type="radio" name="q13" value="2"><div class="likert-btn"><span class="likert-num">2</span><span class="likert-micro">Mostly<br>person</span></div></label>
+          <label class="likert-option"><input type="radio" name="q13" value="3"><div class="likert-btn"><span class="likert-num">3</span><span class="likert-micro">Mixed</span></div></label>
+          <label class="likert-option"><input type="radio" name="q13" value="4"><div class="likert-btn"><span class="likert-num">4</span><span class="likert-micro">Mostly<br>system</span></div></label>
+          <label class="likert-option"><input type="radio" name="q13" value="5"><div class="likert-btn"><span class="likert-num">5</span><span class="likert-micro">Fully system<br>supported</span></div></label>
+        </div>
+        <div class="scale-anchors"><span>Fully person dependent</span><span>Fully system supported</span></div>
+        <div class="error-msg">Please select a response.</div>
+      </div>
+
+      <div class="question-item" data-q="14">
+        <div class="scale-type">Structural maturity scale</div>
+        <div class="question-text">Does team morale drop noticeably when certain leaders are absent?</div>
+        <div class="likert">
+          <label class="likert-option"><input type="radio" name="q14" value="1"><div class="likert-btn"><span class="likert-num">1</span></div></label>
+          <label class="likert-option"><input type="radio" name="q14" value="2"><div class="likert-btn"><span class="likert-num">2</span></div></label>
+          <label class="likert-option"><input type="radio" name="q14" value="3"><div class="likert-btn"><span class="likert-num">3</span></div></label>
+          <label class="likert-option"><input type="radio" name="q14" value="4"><div class="likert-btn"><span class="likert-num">4</span></div></label>
+          <label class="likert-option"><input type="radio" name="q14" value="5"><div class="likert-btn"><span class="likert-num">5</span></div></label>
+        </div>
+        <div class="scale-anchors"><span>Fully person dependent</span><span>Fully system supported</span></div>
+        <div class="error-msg">Please select a response.</div>
+      </div>
+
+      <div class="question-item" data-q="15">
+        <div class="scale-type">Structural maturity scale</div>
+        <div class="question-text">Do difficult conversations get delayed until specific people are present?</div>
+        <div class="likert">
+          <label class="likert-option"><input type="radio" name="q15" value="1"><div class="likert-btn"><span class="likert-num">1</span></div></label>
+          <label class="likert-option"><input type="radio" name="q15" value="2"><div class="likert-btn"><span class="likert-num">2</span></div></label>
+          <label class="likert-option"><input type="radio" name="q15" value="3"><div class="likert-btn"><span class="likert-num">3</span></div></label>
+          <label class="likert-option"><input type="radio" name="q15" value="4"><div class="likert-btn"><span class="likert-num">4</span></div></label>
+          <label class="likert-option"><input type="radio" name="q15" value="5"><div class="likert-btn"><span class="likert-num">5</span></div></label>
+        </div>
+        <div class="scale-anchors"><span>Fully person dependent</span><span>Fully system supported</span></div>
+        <div class="error-msg">Please select a response.</div>
+      </div>
+
+      <div class="question-item" data-q="16">
+        <div class="scale-type">Structural maturity scale</div>
+        <div class="question-text">Are culture and standards system-driven or personality-driven?</div>
+        <div class="likert">
+          <label class="likert-option"><input type="radio" name="q16" value="1"><div class="likert-btn"><span class="likert-num">1</span></div></label>
+          <label class="likert-option"><input type="radio" name="q16" value="2"><div class="likert-btn"><span class="likert-num">2</span></div></label>
+          <label class="likert-option"><input type="radio" name="q16" value="3"><div class="likert-btn"><span class="likert-num">3</span></div></label>
+          <label class="likert-option"><input type="radio" name="q16" value="4"><div class="likert-btn"><span class="likert-num">4</span></div></label>
+          <label class="likert-option"><input type="radio" name="q16" value="5"><div class="likert-btn"><span class="likert-num">5</span></div></label>
+        </div>
+        <div class="scale-anchors"><span>Fully person dependent</span><span>Fully system supported</span></div>
+        <div class="error-msg">Please select a response.</div>
+      </div>
+    </div>
+
+    <!-- DIMENSION 5 — Structural Resilience -->
+    <div class="variable-block">
+      <div class="variable-tag">Dimension 5 of 5</div>
+      <div class="variable-name">Structural Resilience</div>
+      <div class="variable-desc">How stable the leadership system is under stress or change</div>
+
+      <div class="question-item" data-q="17">
+        <div class="scale-type">Structural maturity scale — 1 Fully person dependent · 5 Fully system supported</div>
+        <div class="question-text">Has the organisation tested leadership continuity during absence or transition?</div>
+        <div class="likert">
+          <label class="likert-option"><input type="radio" name="q17" value="1"><div class="likert-btn"><span class="likert-num">1</span><span class="likert-micro">Fully person<br>dependent</span></div></label>
+          <label class="likert-option"><input type="radio" name="q17" value="2"><div class="likert-btn"><span class="likert-num">2</span><span class="likert-micro">Mostly<br>person</span></div></label>
+          <label class="likert-option"><input type="radio" name="q17" value="3"><div class="likert-btn"><span class="likert-num">3</span><span class="likert-micro">Mixed</span></div></label>
+          <label class="likert-option"><input type="radio" name="q17" value="4"><div class="likert-btn"><span class="likert-num">4</span><span class="likert-micro">Mostly<br>system</span></div></label>
+          <label class="likert-option"><input type="radio" name="q17" value="5"><div class="likert-btn"><span class="likert-num">5</span><span class="likert-micro">Fully system<br>supported</span></div></label>
+        </div>
+        <div class="scale-anchors"><span>Fully person dependent</span><span>Fully system supported</span></div>
+        <div class="error-msg">Please select a response.</div>
+      </div>
+
+      <div class="question-item" data-q="18">
+        <div class="scale-type">Structural maturity scale</div>
+        <div class="question-text">Could your leadership structure absorb 20% growth without overload?</div>
+        <div class="likert">
+          <label class="likert-option"><input type="radio" name="q18" value="1"><div class="likert-btn"><span class="likert-num">1</span></div></label>
+          <label class="likert-option"><input type="radio" name="q18" value="2"><div class="likert-btn"><span class="likert-num">2</span></div></label>
+          <label class="likert-option"><input type="radio" name="q18" value="3"><div class="likert-btn"><span class="likert-num">3</span></div></label>
+          <label class="likert-option"><input type="radio" name="q18" value="4"><div class="likert-btn"><span class="likert-num">4</span></div></label>
+          <label class="likert-option"><input type="radio" name="q18" value="5"><div class="likert-btn"><span class="likert-num">5</span></div></label>
+        </div>
+        <div class="scale-anchors"><span>Fully person dependent</span><span>Fully system supported</span></div>
+        <div class="error-msg">Please select a response.</div>
+      </div>
+
+      <div class="question-item" data-q="19">
+        <div class="scale-type">Structural maturity scale</div>
+        <div class="question-text">Are leadership responsibilities clearly defined or historically accumulated?</div>
+        <div class="likert">
+          <label class="likert-option"><input type="radio" name="q19" value="1"><div class="likert-btn"><span class="likert-num">1</span></div></label>
+          <label class="likert-option"><input type="radio" name="q19" value="2"><div class="likert-btn"><span class="likert-num">2</span></div></label>
+          <label class="likert-option"><input type="radio" name="q19" value="3"><div class="likert-btn"><span class="likert-num">3</span></div></label>
+          <label class="likert-option"><input type="radio" name="q19" value="4"><div class="likert-btn"><span class="likert-num">4</span></div></label>
+          <label class="likert-option"><input type="radio" name="q19" value="5"><div class="likert-btn"><span class="likert-num">5</span></div></label>
+        </div>
+        <div class="scale-anchors"><span>Fully person dependent</span><span>Fully system supported</span></div>
+        <div class="error-msg">Please select a response.</div>
+      </div>
+
+      <div class="question-item" data-q="20">
+        <div class="scale-type">Structural maturity scale</div>
+        <div class="question-text">Does the organisation rely on heroic effort during pressure periods?</div>
+        <div class="likert">
+          <label class="likert-option"><input type="radio" name="q20" value="1"><div class="likert-btn"><span class="likert-num">1</span></div></label>
+          <label class="likert-option"><input type="radio" name="q20" value="2"><div class="likert-btn"><span class="likert-num">2</span></div></label>
+          <label class="likert-option"><input type="radio" name="q20" value="3"><div class="likert-btn"><span class="likert-num">3</span></div></label>
+          <label class="likert-option"><input type="radio" name="q20" value="4"><div class="likert-btn"><span class="likert-num">4</span></div></label>
+          <label class="likert-option"><input type="radio" name="q20" value="5"><div class="likert-btn"><span class="likert-num">5</span></div></label>
+        </div>
+        <div class="scale-anchors"><span>Fully person dependent</span><span>Fully system supported</span></div>
+        <div class="error-msg">Please select a response.</div>
+      </div>
+    </div>
+
+    <!-- EMAIL CAPTURE -->
+    <div class="email-section">
+      <div class="email-title">Where should we send your report?</div>
+      <div class="email-desc">Your Leadership Dependency Audit™ report will be delivered to the address below within 24 hours. It will include your Dependency Index Score, Structural Maturity Score, Leadership Risk Score, and Operational Resilience Score across all five dimensions.</div>
+      <div class="classify-grid" style="margin-bottom:0;">
+        <div class="field-group">
+          <label class="field-label" for="first-name">First name</label>
+          <input class="field-input" type="text" id="first-name" placeholder="Your first name">
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="email">Email address</label>
+          <input class="field-input" type="email" id="email" placeholder="you@organisation.com">
+        </div>
+        <div class="field-group" style="grid-column:1/-1;">
+          <label class="field-label" for="org-name">Organisation <span style="opacity:0.4;font-size:9px;">(optional)</span></label>
+          <input class="field-input" type="text" id="org-name" placeholder="Your organisation name">
+        </div>
+      </div>
+    </div>
+
+    <div class="submit-row">
+      <button class="submit-btn" id="submit-btn" onclick="submitDiagnostic()">Submit Audit</button>
+      <span class="submit-note">Confidential · Report within 24 hours</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════ HOLDING / UPSELL ══════════════════ -->
+<div id="screen-holding">
+  <div class="holding-inner">
+    <div class="holding-icon">✓</div>
+    <h2 class="holding-title">Audit received.</h2>
+    <p class="holding-body">
+      Thank you, <span id="holding-name">—</span>. Your responses have been submitted. Your Leadership Dependency Audit™ report will be prepared and delivered to <strong id="holding-email">your email</strong> within 24 hours.<br><br>
+      The report covers your Dependency Index Score, Structural Maturity Score, Leadership Risk Score, and Operational Resilience Score — mapped across all five structural dimensions.
+    </p>
+    <div class="holding-divider"></div>
+    <div class="upsell-card">
+      <div class="upsell-tag">[ THL ] Full Service · Leadership Dependency Audit</div>
+      <div class="upsell-title">This diagnostic surfaces the pattern.<br>The full audit names what's driving it.</div>
+      <div class="upsell-body">
+        The Leadership Dependency Audit is a forensic examination of how your organisation's operational intelligence is distributed — examining decision gravity, knowledge concentration risk, execution dependency, cultural load bearing, and structural resilience across your entire leadership layer. Findings are delivered as a confidential executive report, risk-flagged and designed for founders, CEOs, and boards.
+      </div>
+      <div class="upsell-price">$900</div>
+      <a class="upsell-btn" href="mailto:hello@humanlabofficial.com">Enquire About the Full Audit</a>
+    </div>
+    <p class="holding-footnote">
+      Kaylee-Jane | The Human Lab · humanlabofficial.com<br>
+      [ THL-SYS ] · Leadership Dependency Audit™ · LDA-01
+    </p>
+  </div>
+</div>
+
+<script>
+  const TOTAL_Q = 20;
+  const FORMSPREE = 'https://formspree.io/f/xeepgjdd';
+
+  function updateProgress() {
+    const answered = document.querySelectorAll('input[type="radio"]:checked').length;
+    const pct = Math.round((answered / TOTAL_Q) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = answered + ' / ' + TOTAL_Q;
+  }
+
+  document.addEventListener('change', e => {
+    if (e.target.type === 'radio') {
+      updateProgress();
+      const qi = e.target.closest('.question-item');
+      if (qi) qi.classList.remove('error');
+    }
+  });
+
+  function submitDiagnostic() {
+    let valid = true;
+
+    for (let i = 1; i <= TOTAL_Q; i++) {
+      const answered = document.querySelector(`input[name="q${i}"]:checked`);
+      const qi = document.querySelector(`[data-q="${i}"]`);
+      if (!answered) {
+        valid = false;
+        if (qi) qi.classList.add('error');
+      }
+    }
+
+    const emailEl = document.getElementById('email');
+    const email = emailEl.value.trim();
+    const firstName = document.getElementById('first-name').value.trim();
+
+    if (!email || !email.includes('@')) {
+      valid = false;
+      emailEl.style.borderColor = 'rgba(180,80,80,0.6)';
+    }
+
+    if (!valid) {
+      const first = document.querySelector('.question-item.error') || emailEl;
+      first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    const responses = {};
+    for (let i = 1; i <= TOTAL_Q; i++) {
+      responses[`q${i}`] = document.querySelector(`input[name="q${i}"]:checked`).value;
+    }
+
+    const payload = {
+      _subject: `LDA-01 Submission — ${firstName || 'New respondent'}`,
+      instrument: 'LDA-01 · Leadership Dependency Audit™',
+      firstName,
+      email,
+      organisation: document.getElementById('org-name').value.trim(),
+      roleTitle: document.getElementById('role-title').value.trim(),
+      department: document.getElementById('dept').value.trim(),
+      tenure: document.getElementById('tenure').value,
+      directReports: document.getElementById('reports').value,
+      budgetResponsibility: document.getElementById('budget').value,
+      orgSize: document.getElementById('org-size').value,
+      ...responses,
+      submittedAt: new Date().toISOString()
+    };
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    fetch(FORMSPREE, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(() => showHolding(firstName, email))
+    .catch(() => showHolding(firstName, email));
+  }
+
+  function showHolding(name, email) {
+    document.getElementById('screen-instrument').style.display = 'none';
+    const holding = document.getElementById('screen-holding');
+    holding.classList.add('active');
+    if (name) document.getElementById('holding-name').textContent = name;
+    if (email) document.getElementById('holding-email').textContent = email;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
